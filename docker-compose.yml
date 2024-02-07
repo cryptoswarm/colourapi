@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  mssqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=PA55word
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+  colourapi:
+    container_name: colourapi
+    depends_on:
+      - mssqlserver
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DBServer=mssqlserver
+      - ConnectionStrings__ColourApi="Server=mssqlserver,1433;Initial Catalog=Colours;User Id=SA;Password=PA55word"
+  
+# Connection string Server=mssqlserver,1433;Initial Catalog=Colours;User Id=SA;Password=PA55word
+  
