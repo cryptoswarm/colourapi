@@ -1,23 +1,38 @@
 version: '3.8'
 services:
-  mssqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=PA55word
-      - MSSQL_PID=Express
-    ports:
-      - "1433:1433"
   colourapi:
     container_name: colourapi
     depends_on:
       - mssqlserver
     build: .
     ports:
-      - "8080:80"
+      - "8080:8080"
     environment:
-      - DBServer=mssqlserver
-      - ConnectionStrings__ColourApi="Server=mssqlserver,1433;Initial Catalog=Colours;User Id=SA;Password=PA55word"
-  
-# Connection string Server=mssqlserver,1433;Initial Catalog=Colours;User Id=SA;Password=PA55word
+      - "ConnectionStrings__ColourApi=Server=colourapi-mssqlserver; Initial Catalog=Colours; User Id=sa; Password=${MSSQL_SA_PASSWORD:?err}"
+
+  mssqlserver:
+    container_name: colourapi-mssqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:?err}
+      - MSSQL_PID=Express
+    volumes:
+      - "mssql_data:/var/opt/mssql/data"
+      - "mssql_logs:/var/opt/mssql/log"
+      - "mssql_secrets:/var/opt/mssql/secrets"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD:?err} -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mssql_data:
+  mssql_logs:
+  mssql_secrets:
   
