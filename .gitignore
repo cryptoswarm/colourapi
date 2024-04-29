@@ -33,3 +33,5 @@ msbuild.wrn
 
 # app settings
 appsettings.json
+.env
+.mono
