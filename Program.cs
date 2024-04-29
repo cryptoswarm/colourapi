@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using ColourAPI.Contexts;
+using ColourAPI.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace ColourAPI
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(w =>{
-                    w.UseStartup<Startup>();
-                })
-                .Build()
-                .Run();
-        }
-    }
-}
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("ColourApi");
+Console.WriteLine("connectionString {0}", connectionString);
+
+builder.Services.AddDbContext<ColourContext>(opts => {
+    opts.UseSqlServer(connectionString);
+});
+
+builder.Services.AddScoped<IColourRepository, ColourRepository>();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
