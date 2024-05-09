@@ -26,14 +26,14 @@ public class ColourRepository : IColourRepository
         return colour;
     }
 
-    public async Task<Colour> GetColourByIdAsync(Guid id)
+    public IQueryable<Colour> GetColourById(Guid id)
     {
-        return await _colourContext.Colours.FindAsync(id);
+        return _colourContext.Colours.Where(c => c.Id == id);
     }
 
-    public async Task<IEnumerable<Colour>> GetColours()
+    public IQueryable<Colour> GetColours()
     {
-        return await _colourContext.Colours.ToListAsync();
+        return _colourContext.Colours;
     }
 
     public async Task RemoveColourByIdAsync(Guid id)

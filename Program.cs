@@ -1,5 +1,6 @@
 ﻿using ColourAPI.Contexts;
 using ColourAPI.Repositories;
+using ColourAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,8 +13,10 @@ builder.Services.AddDbContext<ColourContext>(opts => {
     opts.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped<IColourRepository, ColourRepository>();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IColoursService, ColourService>();
+builder.Services.AddScoped<IColourRepository, ColourRepository>();
 
 var app = builder.Build();
 
