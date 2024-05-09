@@ -1,6 +1,7 @@
 ﻿using ColourAPI.Models.Entities;
 using ColourAPI.Repositories;
 using ColourAPI.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ColourAPI.Controllers;
@@ -28,7 +29,15 @@ public class ColoursController : ControllerBase
         var entity = await _coloursService.GetColourByIdAsync(id);
         if(entity == null)
         {
-            return NotFound();
+            return NotFound(new ProblemDetails{
+                Status= StatusCodes.Status404NotFound,
+                Type= "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4",
+                Title="Not Found",
+                Extensions= new Dictionary<string, object?>
+                {
+                    {"errors", $"Resouce by id: {id} was not found"}
+                }   
+            });
         }
         return new OkObjectResult(entity);
     }
