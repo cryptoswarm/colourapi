@@ -8,8 +8,8 @@ using ColourAPI.Models.Entities;
 namespace ColourAPI.Repositories;
 public interface IColourRepository{
 
-    Task<Colour> GetColourByIdAsync(Guid guid);
-    Task<IEnumerable<Colour>> GetColours();
+    IQueryable<Colour> GetColourById(Guid guid);
+    IQueryable<Colour> GetColours();
     Task<Colour> AddColourAsync(Colour colour);
     Task RemoveColourByIdAsync(Guid id);
     Task<Colour> UpdateColourAsync(Guid id, Colour colour);
