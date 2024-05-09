@@ -1,4 +1,5 @@
 ﻿using ColourAPI.Contexts;
+using ColourAPI.Middlewares;
 using ColourAPI.Repositories;
 using ColourAPI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,14 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IColoursService, ColourService>();
 builder.Services.AddScoped<IColourRepository, ColourRepository>();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+
+// app. UseProblemDetails();
 
 app.UseHttpsRedirection();
 
